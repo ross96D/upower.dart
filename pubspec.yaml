@@ -1,13 +1,12 @@
 name: upower
 version: 0.7.0
 
-description:
-  Provides a client to connect to UPower - the service that does power management on Linux.
+description: Provides a client to connect to UPower - the service that does power management on Linux.
 
 homepage: https://github.com/canonical/upower.dart
 
 environment:
-  sdk: '>=2.14.0 <3.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 platforms:
   linux:
