@@ -110,7 +110,7 @@ class UPowerProfileActionInfo {
 
   factory UPowerProfileActionInfo.from(Map<String, DBusValue> values) {
     return UPowerProfileActionInfo(
-      name: values['Action']?.asString() ?? '',
+      name: values['Name']?.asString() ?? values['Action']?.asString() ?? '',
       description: values['Description']?.asString() ?? '',
       enabled: values['Enabled']?.asBoolean() ?? false,
     );
