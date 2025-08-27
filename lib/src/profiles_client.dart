@@ -96,6 +96,88 @@ enum UPowerProfilePerformanceDegraded {
   }
 }
 
+class UPowerProfileActionInfo {
+  /// Action name
+  final String name;
+
+  /// Human-readable description of the action
+  final String description;
+
+  /// Boolean indicating whether the action is enabled or not.
+  final bool enabled;
+
+  UPowerProfileActionInfo({required this.name, required this.description, required this.enabled});
+
+  factory UPowerProfileActionInfo.from(Map<String, DBusValue> values) {
+    return UPowerProfileActionInfo(
+      name: values['Action']?.asString() ?? '',
+      description: values['Description']?.asString() ?? '',
+      enabled: values['Enabled']?.asBoolean() ?? false,
+    );
+  }
+
+  @override
+  bool operator ==(covariant UPowerProfileActionInfo other) {
+    return name == other.name && description == other.description && enabled == other.enabled;
+  }
+
+  @override
+  int get hashCode => Object.hashAll([name, description, enabled]);
+}
+
+/// A list of dictionaries representing the current profile holds.
+/// The keys in the dict are "ApplicationId", "Profile" and "Reason", and correspond to
+/// the "application_id", "profile" and "reason" arguments passed to the HoldProfile() method.
+class UPowerProfileActiveProfileHolds {
+  final String applicationId;
+  final String profile;
+  final String reason;
+
+  UPowerProfileActiveProfileHolds({
+    required this.applicationId,
+    required this.profile,
+    required this.reason,
+  });
+
+  factory UPowerProfileActiveProfileHolds.from(Map<String, DBusValue> values) {
+    return UPowerProfileActiveProfileHolds(
+      applicationId: values['ApplicationId']?.asString() ?? '',
+      profile: values['Profile']?.asString() ?? '',
+      reason: values['Reason']?.asString() ?? '',
+    );
+  }
+
+  @override
+  bool operator ==(covariant UPowerProfileActiveProfileHolds other) {
+    return applicationId == other.applicationId && profile == other.profile && reason == other.reason;
+  }
+
+  @override
+  int get hashCode => Object.hashAll([applicationId, profile, reason]);
+}
+
+class UPowerProfileProfile {
+  final String driver;
+  final String profile;
+
+  UPowerProfileProfile({required this.driver, required this.profile});
+
+  factory UPowerProfileProfile.from(Map<String, DBusValue> values) {
+    return UPowerProfileProfile(
+      driver: values['Driver']?.asString() ?? '',
+      profile: values['Profile']?.asString() ?? '',
+    );
+  }
+
+  @override
+  bool operator ==(covariant UPowerProfileProfile other) {
+    return driver == other.driver && profile == other.profile;
+  }
+
+  @override
+  int get hashCode => Object.hashAll([driver, profile]);
+}
+
 class UPowerProfile {
   final _OrgFreedesktopUPowerPowerProfiles _object;
   final bool _closeBus;
@@ -133,25 +215,34 @@ class UPowerProfile {
   /// appropriate "driver" for each profile type.
   ///
   /// This list is guaranteed to be sorted in the same order that the profiles are listed above.
-  List<Map<String, DBusValue>> get profiles =>
-      _properties['Profiles']?.asArray().map((v) => v.asStringVariantDict()).toList() ?? [];
+  List<UPowerProfileProfile> get profiles =>
+      _properties['Profiles']
+          ?.asArray()
+          .map((v) => UPowerProfileProfile.from(v.asStringVariantDict()))
+          .toList() ??
+      [];
 
   /// An array of strings listing each one of the "actions" implemented in the running daemon.
   /// This is used by API users to figure out whether particular functionality is available in a version
   /// of the daemon.
   List<String> get actions => _properties['Actions']?.asStringArray().toList() ?? [];
 
-  /// An array of key-pair values representing each action. The key named "Description" (s)
-  /// is a human-readable description of the action. The key named "Action" (s) is the name of the action.
-  /// The key named "Enabled" (b) is a boolean indicating whether the action is enabled or not.
-  List<Map<String, DBusValue>> get actionsInfo =>
-      _properties['ActionsInfo']?.asArray().map((v) => v.asStringVariantDict()).toList() ?? [];
+  /// Info about each action.
+  List<UPowerProfileActionInfo> get actionsInfo =>
+      _properties['ActionsInfo']
+          ?.asArray()
+          .map((v) => UPowerProfileActionInfo.from(v.asStringVariantDict()))
+          .toList() ??
+      [];
 
   /// A list of dictionaries representing the current profile holds.
   /// The keys in the dict are "ApplicationId", "Profile" and "Reason", and correspond to
   /// the "application_id", "profile" and "reason" arguments passed to the HoldProfile() method.
-  List<Map<String, DBusValue>> get activeProfileHolds =>
-      _properties['ActiveProfileHolds']?.asArray().map((v) => v.asStringVariantDict()).toList() ??
+  List<UPowerProfileActiveProfileHolds> get activeProfileHolds =>
+      _properties['ActiveProfileHolds']
+          ?.asArray()
+          .map((v) => UPowerProfileActiveProfileHolds.from(v.asStringVariantDict()))
+          .toList() ??
       [];
 
   /// The version of the power-profiles-daemon software.
