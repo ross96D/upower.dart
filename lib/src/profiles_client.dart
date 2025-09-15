@@ -178,6 +178,7 @@ class UPowerProfileProfile {
   int get hashCode => Object.hashAll([driver, profile]);
 }
 
+/// Class to manage upower profiles
 class UPowerProfile {
   final _OrgFreedesktopUPowerPowerProfiles _object;
   final bool _closeBus;
